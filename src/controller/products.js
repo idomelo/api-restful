@@ -29,7 +29,31 @@ async function post(req, res) {
   })
 }
 
+async function put(req, res) {
+  const { id } = req.params
+
+  //Quando é necessário retornar o produto atualizado:
+  const product = await ProductsModel.findOneAndUpdate({ _id:id }, req.body, { new: true })
+
+  res.send({
+    message: 'success',
+    product,
+  })
+
+  /* Quando o retorno do item não é essencial
+  const product = await ProductsModel.findOne({ _id: id })
+
+  await product.updateOne(req.body)
+
+  res.send({
+    message: 'success',
+    product,
+  })
+  */
+}
+
 module.exports = {
   get,
   post,
+  put
 }
