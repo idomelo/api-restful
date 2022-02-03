@@ -26,7 +26,7 @@
     </div>
     <div>
       <label>Preço</label>
-      <input type="text" name="price">
+      <input type="number" name="price">
     </div>
     <div>
       <button type="submit">Cadastrar</button>
@@ -46,11 +46,35 @@
           const productsHtml = data.map(product => `
             <li>
               Nome: ${product.name} - Marca: ${product.brand} - Preço: ${product.price}
+              <a href="#!" class="botao-excluir" data-id="${product._id}">[Excluir]</a>
             </li>
-            
           `).join('')
 
           productsList.innerHTML = productsHtml
+
+          const botoesExcluir = document.querySelectorAll('.botao-excluir')
+
+          botoesExcluir.forEach(botao => {
+            botao.onclick = function(e) {
+              e.preventDefault()
+  
+              const id = this.dataset.id
+              
+              fetch(`${API_URL}/${id}`, {
+                method: 'DELETE',
+  
+              }).then(response => {
+                response.json().then(data => {
+                  if (data.message === 'success') {
+                    alert('Produto excluído com sucesso')
+                    obterLista()
+                  }else {
+                    alert('Ocorreu um erro, tente novamente mais tarde')
+                  }
+                })
+              })
+            }
+          })
         })
       })
     }
