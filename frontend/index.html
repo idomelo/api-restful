@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frontend - API</title>
+</head>
+<body>
+
+  <h1>Listagem de produtos</h1>
+
+  <ul id="products-list"></ul>
+
+  <hr>
+
+  <h2>Cadastro de Produto</h2>
+  <form id="form">
+    <div>
+      <label>Nome</label>
+      <input type="text" name="name">
+    </div>
+    <div>
+      <label>Marca</label>
+      <input type="text" name="brand">
+    </div>
+    <div>
+      <label>Preço</label>
+      <input type="text" name="price">
+    </div>
+    <div>
+      <button type="submit">Cadastrar</button>
+    </div>
+  </form>
+
+
+  <script>
+    const API_URL = 'http://localhost:8080/api/products'
+    const productsList = document.getElementById('products-list')
+    const form = document.querySelector('#form')
+
+    //Obtém a lista de produtos
+    function obterLista() {
+      fetch(API_URL).then(response => {
+        response.json().then(data => {
+          const productsHtml = data.map(product => `
+            <li>
+              Nome: ${product.name} - Marca: ${product.brand} - Preço: ${product.price}
+            </li>
+            
+          `).join('')
+
+          productsList.innerHTML = productsHtml
+        })
+      })
+    }
+    obterLista()
+
+    // Fazer o Cadastro de produtos
+    form.onsubmit = function(e) {
+      e.preventDefault()
+
+      const name = document.forms['form'].name.value
+      const brand = document.forms['form'].brand.value
+      const price = document.forms['form'].price.value
+
+      fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          brand,
+          price,
+        })
+      }).then(response => {
+        response.json().then(data => {
+          if (data.message === 'success') {
+            alert('Cadastro realizado com sucesso!')
+            form.reset()
+            obterLista()
+          } else {
+            alert('Ocorreu um erro, tente novamente mais tarde!')
+          }
+        })
+      })
+    }
+
+  </script>
+
+  
+  
+</body>
+</html>
